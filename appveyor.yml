@@ -80,7 +80,7 @@ install:
     cmake --build build --config %CMAKE_BUILD_TYPE% --target zpg_packer &&
     cmake --build build --config %CMAKE_BUILD_TYPE% --target install &&
     cd ..)
-  - cd c:\projects\MVRunner
+  - cd c:\projects\musicrap
 
 before_build:
 - cmd: |
@@ -97,7 +97,7 @@ artifacts:
   - path: build/Release/MVJam.exe
           build/Debug/MVJam_d.exe
           build/*.zip
-    name: MVJam
+    name: MusiCrap
 
 branches:
   except:
