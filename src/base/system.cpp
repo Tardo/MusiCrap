@@ -91,7 +91,7 @@ namespace ups
 	}
 
 
-	/** TIME **/
+	/**  TIME  **/
 	/* Original code from teeworlds source */
 	sf::Int64 timeGet() noexcept
 	{
