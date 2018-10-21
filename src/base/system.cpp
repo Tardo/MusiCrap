@@ -154,7 +154,7 @@ namespace ups
 	#if defined(SFML_SYSTEM_LINUX)
 		return strncpy(to, from, size);
 	#elif defined(SFML_SYSTEM_WINDOWS)
-		return strncpy(to, from, len);
+		return strncpy(to, from, size);
 	#else
 		#error not implemented
 	#endif
