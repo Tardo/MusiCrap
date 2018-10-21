@@ -133,11 +133,7 @@ find_package(Zpg REQUIRED)
 find_package(SFML 2.5 COMPONENTS graphics window audio system)
 
 set(CLIENT_LIBS fmod
-				#${SFML_LIBRARIES}
-               	sfml-graphics-s
-                sfml-window-s
-                sfml-audio-s
-                sfml-system-s
+				${SFML_LIBRARIES}
                 ${ZPG_LIBRARIES}
                 ${OPENGL_glu_LIBRARY}
                 ${SFML_DEPENDENCIES}
