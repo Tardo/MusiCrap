@@ -89,7 +89,7 @@ before_build:
     cd ..
     
 build_script:
-  - cmd: cmake --build build --config %CMAKE_BUILD_TYPE% --target MVRunner
+  - cmd: cmake --build build --config %CMAKE_BUILD_TYPE% --target MVJam
   - cmd: cmake --build build --config %CMAKE_BUILD_TYPE% --target create_zpg
   - cmd: cmake --build build --config %CMAKE_BUILD_TYPE% --target package
 
