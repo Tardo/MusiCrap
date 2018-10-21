@@ -1,0 +1,9 @@
+ Necesitas instalar fmod para poder iniciar el programa:
+ 
+ --> Encontrarás la libreria en la carpeta "fmod_libs". Para instalar copia el contenido de la carpeta a /usr/lib
+ 
+Linux 64bits:
+ ~# mv fmod_libs/linux/x86_64/* /usr/lib64/
+ 
+Linux 32bits:
+ ~# mv fmod_libs/linux/x86/* /usr/lib/

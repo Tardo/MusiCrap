@@ -1,0 +1,8 @@
+.autotools
+.cproject
+.project
+.settings/
+.pydevproject
+build/
+game.cfg
+
