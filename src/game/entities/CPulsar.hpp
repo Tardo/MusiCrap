@@ -35,7 +35,7 @@ public:
 	const float getSize() const noexcept { return m_Size; }
 	const std::vector<CPulsarRing>& getRings() const { return m_vRings; }
 
-	const CPulsarRing* ringInZone(float top, float bottom) noexcept;
+	const CPulsarRing* ringInZone(float top, float bottom, float *pMidDist) noexcept;
 	bool removeRing(const CPulsarRing &ring) noexcept;
 	void clearRings() noexcept;
 

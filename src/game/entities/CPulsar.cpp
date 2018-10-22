@@ -63,14 +63,18 @@ void CPulsar::tick() noexcept
 	}
 }
 
-const CPulsarRing* CPulsar::ringInZone(float top, float bottom) noexcept
+const CPulsarRing* CPulsar::ringInZone(float top, float bottom, float *pMidDist) noexcept
 {
 	std::vector<CPulsarRing>::const_iterator cit = m_vRings.cbegin();
+	const float midPos = top+(bottom-top)/2.0f;
 	while (cit != m_vRings.cend())
 	{
 		const float curPosY = (*cit).m_Pos.y + (*cit).m_Size/2.0f;
 		if (curPosY >= top && curPosY <= bottom)
+		{
+			*pMidDist = midPos-curPosY;
 			return &(*cit);
+		}
 		++cit;
 	}
 

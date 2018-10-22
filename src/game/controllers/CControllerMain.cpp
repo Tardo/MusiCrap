@@ -74,7 +74,8 @@ void CControllerMain::tick() noexcept
 		// Interact with Pulsar Rings
 		static bool keyPressed = false;
 		const bool fire = Game()->Client()->Controls().isKeyPressed("lineRed") || Game()->Client()->Controls().isKeyPressed("lineGreen") || Game()->Client()->Controls().isKeyPressed("lineBlue");
-		const CPulsarRing *pRing = m_pPulsar->ringInZone(g_Config.m_ScreenHeight/4.0f, g_Config.m_ScreenHeight/4.0f+USER_ZONE_HEIGTH);
+		float ringOffset = 0.0f;
+		const CPulsarRing *pRing = m_pPulsar->ringInZone(g_Config.m_ScreenHeight/4.0f-USER_ZONE_HEIGTH, g_Config.m_ScreenHeight/4.0f+USER_ZONE_HEIGTH/2.0f, &ringOffset);
 		static CPulsarRing *pLastRing = nullptr;
 
 		CSystemSound *pSystemSound = Game()->Client()->getSystem<CSystemSound>();
@@ -96,13 +97,26 @@ void CControllerMain::tick() noexcept
 				pSystemSound->play(CAssetManager::SOUND_GOOD_L + selectedSound, 100.0f);
 				pMainPlayer->addPoints(100);
 				++pMainPlayer->m_Wins;
-				++pMainPlayer->m_Combos;
-				pMainPlayer->m_LastComboTime = ups::timeGet();
-				if (pMainPlayer->m_Combos >= g_Config.m_MinComboCount)
+
+				if (fabs(ringOffset) <= 5.0f)
 				{
-					char aBuff[255];
-					snprintf(aBuff, sizeof(aBuff), "Combos x%d (%d Puntos!)", pMainPlayer->m_Combos, 100*pMainPlayer->m_Combos);
-					Game()->Client()->showBroadcastMessage(aBuff, 0.6f);
+					++pMainPlayer->m_Combos;
+					pMainPlayer->m_LastComboTime = ups::timeGet();
+					if (pMainPlayer->m_Combos >= g_Config.m_MinComboCount)
+					{
+						char aBuff[255];
+						snprintf(aBuff, sizeof(aBuff), "Perfecto!!! x%d", pMainPlayer->m_Combos);
+						Game()->Client()->showBroadcastMessage(aBuff, 0.6f);
+					}
+				} else if (fabs(ringOffset) <= 10.0f)
+				{
+					Game()->Client()->showBroadcastMessage("Bastante Bien!", 0.6f);
+					checkPlayerCombos(pMainPlayer);
+				}
+				else if (fabs(ringOffset) <= USER_ZONE_HEIGTH/2.0f)
+				{
+					Game()->Client()->showBroadcastMessage("Puedes hacerlo mejor", 0.6f);
+					checkPlayerCombos(pMainPlayer);
 				}
 				pRing = nullptr;
 			}
@@ -138,7 +152,7 @@ void CControllerMain::checkPlayerCombos(CPlayer *pPlayer) noexcept
 		pPlayer->m_Combos = 0;
 
 		for (int i=0; i<g_Config.m_ScreenWidth; i+=50)
-			createImpactSparkMetal(sf::Vector2f(-g_Config.m_ScreenWidth/2.0f + i, g_Config.m_ScreenHeight/4.0f+USER_ZONE_HEIGTH+USER_ZONE_HEIGTH/2.0f), sf::Color::White);
+			createImpactSparkMetal(sf::Vector2f(-g_Config.m_ScreenWidth/2.0f + i, g_Config.m_ScreenHeight/4.0f-USER_ZONE_HEIGTH/2.0f), sf::Color::White);
 	}
 }
 
@@ -157,6 +171,6 @@ void CControllerMain::onStart() noexcept
 
 	// Calculate Start Time
 	const float min = m_pPulsar->getPosition().y;
-	const float max = g_Config.m_ScreenHeight/4.0f+USER_ZONE_HEIGTH+USER_ZONE_HEIGTH/2.0f;
+	const float max = g_Config.m_ScreenHeight/4.0f;
 	pSystemFMod->playMusic((max - min)/g_Config.m_PulsarRingVelocity * 2.0f);
 }

@@ -15,6 +15,7 @@ CSystemFMod::CSystemFMod()
 	m_pFChannelGroup = nullptr;
 	m_pFChannelGroupBackground = nullptr;
 	m_pFDSPFFT = nullptr;
+	m_pFDSPFFTBackground = nullptr;
 	m_PlayDelaySecs = 0.0f;
 	m_PlayTimeStart = 0;
 	m_MusicPlay = false;
@@ -28,6 +29,7 @@ CSystemFMod::~CSystemFMod()
 	m_pFChannelGroupBackground->removeDSP(m_pFDSPFFT);
 	m_pFChannelGroupBackground->release();
 	m_pFDSPFFT->release();
+	m_pFDSPFFTBackground->release();
 	m_pFSystem->release();
 }
 
@@ -55,14 +57,18 @@ bool CSystemFMod::init() noexcept
     ERRCHECK(FMResult);
     m_pFDSPFFT->setParameterInt(FMOD_DSP_FFT_WINDOWTYPE, FMOD_DSP_FFT_WINDOW_BLACKMANHARRIS);
     m_pFDSPFFT->setParameterInt(FMOD_DSP_FFT_WINDOWSIZE, 4096 * 4);
+    FMResult = m_pFSystem->createDSPByType(FMOD_DSP_TYPE_FFT, &m_pFDSPFFTBackground);
+    ERRCHECK(FMResult);
+    m_pFDSPFFTBackground->setParameterInt(FMOD_DSP_FFT_WINDOWTYPE, FMOD_DSP_FFT_WINDOW_BLACKMANHARRIS);
+    m_pFDSPFFTBackground->setParameterInt(FMOD_DSP_FFT_WINDOWSIZE, 4096 * 4);
 
     FMResult = m_pFSystem->getMasterChannelGroup(&m_pFChannelGroup);
     ERRCHECK(FMResult);
-    //m_pFChannelGroup->addDSP(0, m_pFDSPFFT);
+    m_pFChannelGroup->addDSP(0, m_pFDSPFFT);
 
     FMResult = m_pFSystem->createChannelGroup("background", &m_pFChannelGroupBackground);
     ERRCHECK(FMResult);
-    m_pFChannelGroupBackground->addDSP(FMOD_CHANNELCONTROL_DSP_TAIL, m_pFDSPFFT);
+    m_pFChannelGroupBackground->addDSP(FMOD_CHANNELCONTROL_DSP_TAIL, m_pFDSPFFTBackground);
     m_pFChannelGroupBackground->setVolume(0.0f);
 
     return true;
@@ -77,6 +83,7 @@ void CSystemFMod::update(float deltaTime) noexcept
 {
 	m_pFSystem->update();
 	calculateFFTSpectrum(SPECLEN);
+	calculateFFTSpectrumBackground(SPECLEN);
 
 	if (!m_MusicPlay && m_PlayDelaySecs > 0.0f && ups::timeGet() - m_PlayTimeStart >= m_PlayDelaySecs * ups::timeFreq())
 	{
@@ -177,6 +184,23 @@ void CSystemFMod::calculateFFTSpectrum(unsigned int length)
 	}
 }
 
+void CSystemFMod::calculateFFTSpectrumBackground(unsigned int length)
+{
+	FMOD_DSP_PARAMETER_FFT *fft;
+	float dom_freq = 0.0f;
+
+	m_pFDSPFFTBackground->getParameterData(FMOD_DSP_FFT_SPECTRUMDATA, (void **)&fft, 0, 0, 0);
+	m_pFDSPFFTBackground->getParameterFloat(FMOD_DSP_FFT_DOMINANT_FREQ, &dom_freq, 0, 0);
+	if (fft->numchannels < 2)
+		return;
+
+	for (unsigned int bin = 0; bin < length; bin++)
+	{
+		m_vLeftSpecBackground[bin] = fft->spectrum[0][bin];
+		m_vRightSpecBackground[bin] = fft->spectrum[1][bin];
+	}
+}
+
 void CSystemFMod::getEnergy(float *pEnergyKick, float *pEnergySnare)
 {
 	float LeftSum = 0.0f;
@@ -185,8 +209,8 @@ void CSystemFMod::getEnergy(float *pEnergyKick, float *pEnergySnare)
 	// Detectar golpe de bombo
 	for (unsigned int i=30; i<60; i++)
 	{
-		LeftSum += m_vLeftSpec[i];
-		RightSum += m_vRightSpec[i];
+		LeftSum += m_vLeftSpecBackground[i];
+		RightSum += m_vRightSpecBackground[i];
 	}
 	*pEnergyKick = LeftSum*LeftSum + RightSum*RightSum;
 
@@ -194,8 +218,8 @@ void CSystemFMod::getEnergy(float *pEnergyKick, float *pEnergySnare)
 	LeftSum = RightSum = 0;
 	for (unsigned int i=60; i<90; i++)
 	{
-		LeftSum += m_vLeftSpec[i];
-		RightSum += m_vRightSpec[i];
+		LeftSum += m_vLeftSpecBackground[i];
+		RightSum += m_vRightSpecBackground[i];
 	}
 	*pEnergySnare = LeftSum*LeftSum + RightSum*RightSum;
 }
@@ -204,6 +228,8 @@ void CSystemFMod::clearBuffers()
 {
 	memset(m_vLeftSpec, 0, sizeof(float)*SPECLEN);
 	memset(m_vRightSpec, 0, sizeof(float)*SPECLEN);
+	memset(m_vLeftSpecBackground, 0, sizeof(float)*SPECLEN);
+	memset(m_vRightSpecBackground, 0, sizeof(float)*SPECLEN);
 }
 
 void ERRCHECK_fn(FMOD_RESULT result, const char *file, int line)

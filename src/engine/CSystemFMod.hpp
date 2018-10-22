@@ -33,6 +33,9 @@ public:
 	unsigned int getLengthInMilis() noexcept;
 	unsigned int getCursorPositionInMilis(bool background) noexcept;
 
+	float m_vLeftSpecBackground[SPECLEN];
+	float m_vRightSpecBackground[SPECLEN];
+
 	float m_vLeftSpec[SPECLEN];
 	float m_vRightSpec[SPECLEN];
 
@@ -43,6 +46,7 @@ protected:
 	FMOD::Channel *m_pFChannelBackground;
 	FMOD::ChannelGroup *m_pFChannelGroupBackground;
 	FMOD::ChannelGroup *m_pFChannelGroup;
+	FMOD::DSP *m_pFDSPFFTBackground;
 	FMOD::DSP *m_pFDSPFFT;
 
 private:
@@ -50,6 +54,7 @@ private:
 	float m_PlayDelaySecs;
 	bool m_MusicPlay;
 	void calculateFFTSpectrum(unsigned int length);
+	void calculateFFTSpectrumBackground(unsigned int length);
 	void clearBuffers();
 };
 
