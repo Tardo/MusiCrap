@@ -94,8 +94,8 @@ build_script:
   - cmd: cmake --build build --config %CMAKE_BUILD_TYPE% --target package
 
 artifacts:
-  - path: build/Release/MVJam.exe
-  - path: build/Debug/MVJam_d.exe
+  - path: build/Release/MusiCrap.exe
+  - path: build/Debug/MusiCrap_d.exe
   - path: build/*.zip
 
 branches:
