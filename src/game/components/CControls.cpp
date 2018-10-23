@@ -47,7 +47,7 @@ void CControls::processEvent(const sf::Event &ev) noexcept
 		{
 			m_aListenKeyBindCmd[0] = 0x0;
 
-			if (Client()->Menus().getActiveModal() == CMenus::NONE || Client()->Menus().getActiveModal() == CMenus::MODAL_GAMEOVER)
+			if (Client()->Menus().getActiveModal() == CMenus::NONE || Client()->Menus().getActiveModal() == CMenus::MODAL_GAMEOVER || Client()->Menus().getActiveModal() == CMenus::MODAL_END_SONG)
 			{
 				Client()->Menus().setActiveModal(CMenus::NONE);
 				if (Client()->Controller() && !dynamic_cast<CControllerMenu*>(Client()->Controller()))
@@ -238,4 +238,13 @@ const char* CControls::getKeyName(int key)
 	}
 
 	return "Unknown";
+}
+
+const char* CControls::getCommandKeyName(const char *pCmd)
+{
+	std::map<std::string, int>::const_iterator It = m_mCmdBinds.find(pCmd);
+	if (It == m_mCmdBinds.cend())
+		return "Undefined";
+
+	return getKeyName((*It).second);
 }

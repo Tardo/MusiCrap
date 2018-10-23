@@ -16,6 +16,14 @@ public:
 	enum
 	{
 		SPECLEN=256,
+
+		CHANNEL_SPEC = 0,
+		CHANNEL_DELAYED,
+		NUM_CHANNELS,
+
+		CHANNEL_GROUP_MASTER = 0,
+		CHANNEL_GROUP_BACKGROUND,
+		NUM_CHANNEL_GROUPS,
 	};
 
 	CSystemFMod();
@@ -28,33 +36,30 @@ public:
 	bool loadMusic(const char *pData);
 	bool playMusic(float delay);
 	void stopMusic();
-	void getEnergy(float *pEnergyKick, float *pEnergySnare);
+
+	void getEnergy(int channelGroup, float *pEnergyKick, float *pEnergySnare);
+	unsigned int getCursorPositionInMilis(int channel) noexcept;
 
 	unsigned int getLengthInMilis() noexcept;
-	unsigned int getCursorPositionInMilis(bool background) noexcept;
 
-	float m_vLeftSpecBackground[SPECLEN];
-	float m_vRightSpecBackground[SPECLEN];
+	bool isPlaying(int channel);
+	bool isMusicPlay() const noexcept { return m_MusicPlay; }
 
-	float m_vLeftSpec[SPECLEN];
-	float m_vRightSpec[SPECLEN];
+	float m_vLeftSpec[NUM_CHANNEL_GROUPS][SPECLEN];
+	float m_vRightSpec[NUM_CHANNEL_GROUPS][SPECLEN];
 
 protected:
 	FMOD::System *m_pFSystem;
 	FMOD::Sound *m_pFSound;
-	FMOD::Channel *m_pFChannel;
-	FMOD::Channel *m_pFChannelBackground;
-	FMOD::ChannelGroup *m_pFChannelGroupBackground;
-	FMOD::ChannelGroup *m_pFChannelGroup;
-	FMOD::DSP *m_pFDSPFFTBackground;
-	FMOD::DSP *m_pFDSPFFT;
+	FMOD::Channel *m_pFChannel[NUM_CHANNELS];
+	FMOD::ChannelGroup *m_pFChannelGroup[NUM_CHANNEL_GROUPS];
+	FMOD::DSP *m_pFDSPFFT[NUM_CHANNEL_GROUPS];
 
 private:
 	sf::Int64 m_PlayTimeStart;
 	float m_PlayDelaySecs;
 	bool m_MusicPlay;
-	void calculateFFTSpectrum(unsigned int length);
-	void calculateFFTSpectrumBackground(unsigned int length);
+	void calculateFFTSpectrum(int channelGroup, unsigned int length);
 	void clearBuffers();
 };
 

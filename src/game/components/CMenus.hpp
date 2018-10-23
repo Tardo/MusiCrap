@@ -19,6 +19,7 @@ public:
 
 		MODAL_KEY_BIND=1,
 		MODAL_GAMEOVER,
+		MODAL_END_SONG,
 		NUM_MODALS
 	};
 
@@ -44,6 +45,7 @@ private:
 
 	void renderModalKeyBind(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
 	void renderModalGameOver(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
+	void renderModalEndSong(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
 };
 
 #endif

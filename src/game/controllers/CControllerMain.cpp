@@ -4,6 +4,7 @@
 #include <base/system.hpp>
 #include <engine/CAssetManager.hpp>
 #include <engine/CSystemSound.hpp>
+#include <engine/CLocalization.hpp>
 #include <game/controllers/CControllerMain.hpp>
 #include <game/CContext.hpp>
 #include <cstring>
@@ -51,6 +52,36 @@ void CControllerMain::tick() noexcept
 	CController::tick();
 
 	CPlayer *pMainPlayer = Context()->getPlayer();
+	CSystemSound *pSystemSound = Game()->Client()->getSystem<CSystemSound>();
+	float ringOffset = 0.0f;
+	const CPulsarRing *pRing = m_pPulsar->ringInZone(g_Config.m_ScreenHeight/4.0f-USER_ZONE_HEIGTH, g_Config.m_ScreenHeight/4.0f+USER_ZONE_HEIGTH/2.0f, &ringOffset);
+	static CPulsarRing *pLastRing = nullptr;
+
+	// Check invalid rings
+	if (!pRing && pLastRing)
+	{
+		pLastRing->m_Color = sf::Color::White;
+		pLastRing = nullptr;
+		pSystemSound->play(CAssetManager::SOUND_ERROR, 100.0f);
+		pMainPlayer->addPoints(-175);
+		++pMainPlayer->m_Fails;
+		checkPlayerCombos(pMainPlayer);
+	}
+
+	// Check Player Ratio
+	if (pMainPlayer->getRatio() < g_Config.m_MinPlayerRatio)
+	{
+		Game()->Client()->Menus().setActiveModal(CMenus::MODAL_GAMEOVER);
+		CSystemFMod *pSystemFMod = Game()->Client()->getSystem<CSystemFMod>();
+		pSystemFMod->stopMusic();
+	}
+
+	// Check end song
+	CSystemFMod *pSystemFMod = Game()->Client()->getSystem<CSystemFMod>();
+	if (pSystemFMod->isMusicPlay() && !pSystemFMod->isPlaying(CSystemFMod::CHANNEL_DELAYED))
+	{
+		Game()->Client()->Menus().setActiveModal(CMenus::MODAL_END_SONG);
+	}
 
 	if (Game()->Client()->hasFocus() && Game()->Client()->Menus().getActiveModal() == CMenus::NONE)
 	{
@@ -74,20 +105,6 @@ void CControllerMain::tick() noexcept
 		// Interact with Pulsar Rings
 		static bool keyPressed = false;
 		const bool fire = Game()->Client()->Controls().isKeyPressed("lineRed") || Game()->Client()->Controls().isKeyPressed("lineGreen") || Game()->Client()->Controls().isKeyPressed("lineBlue");
-		float ringOffset = 0.0f;
-		const CPulsarRing *pRing = m_pPulsar->ringInZone(g_Config.m_ScreenHeight/4.0f-USER_ZONE_HEIGTH, g_Config.m_ScreenHeight/4.0f+USER_ZONE_HEIGTH/2.0f, &ringOffset);
-		static CPulsarRing *pLastRing = nullptr;
-
-		CSystemSound *pSystemSound = Game()->Client()->getSystem<CSystemSound>();
-		if (!pRing && pLastRing)
-		{
-			pLastRing->m_Color = sf::Color::White;
-			pLastRing = nullptr;
-			pSystemSound->play(CAssetManager::SOUND_ERROR, 100.0f);
-			pMainPlayer->addPoints(-175);
-			++pMainPlayer->m_Fails;
-			checkPlayerCombos(pMainPlayer);
-		}
 		if (!keyPressed && fire)
 		{
 			keyPressed = true;
@@ -105,17 +122,17 @@ void CControllerMain::tick() noexcept
 					if (pMainPlayer->m_Combos >= g_Config.m_MinComboCount)
 					{
 						char aBuff[255];
-						snprintf(aBuff, sizeof(aBuff), "Perfecto!!! x%d", pMainPlayer->m_Combos);
+						snprintf(aBuff, sizeof(aBuff), _("Perfect!!! x%d"), pMainPlayer->m_Combos);
 						Game()->Client()->showBroadcastMessage(aBuff, 0.6f);
 					}
 				} else if (fabs(ringOffset) <= 10.0f)
 				{
-					Game()->Client()->showBroadcastMessage("Bastante Bien!", 0.6f);
+					Game()->Client()->showBroadcastMessage(_("So Good!"), 0.6f);
 					checkPlayerCombos(pMainPlayer);
 				}
 				else if (fabs(ringOffset) <= USER_ZONE_HEIGTH/2.0f)
 				{
-					Game()->Client()->showBroadcastMessage("Puedes hacerlo mejor", 0.6f);
+					Game()->Client()->showBroadcastMessage(_("Can do it better"), 0.6f);
 					checkPlayerCombos(pMainPlayer);
 				}
 				pRing = nullptr;
@@ -133,14 +150,6 @@ void CControllerMain::tick() noexcept
 		}
 
 		pLastRing = const_cast<CPulsarRing*>(pRing);
-
-		// Check Player Ratio
-		if (pMainPlayer->getRatio() < g_Config.m_MinPlayerRatio)
-		{
-			Game()->Client()->Menus().setActiveModal(CMenus::MODAL_GAMEOVER);
-			CSystemFMod *pSystemFMod = Game()->Client()->getSystem<CSystemFMod>();
-			pSystemFMod->stopMusic();
-		}
 	}
 }
 
@@ -171,6 +180,6 @@ void CControllerMain::onStart() noexcept
 
 	// Calculate Start Time
 	const float min = m_pPulsar->getPosition().y;
-	const float max = g_Config.m_ScreenHeight/4.0f;
+	const float max = g_Config.m_ScreenHeight/4.0f+USER_ZONE_HEIGTH/2.0f;
 	pSystemFMod->playMusic((max - min)/g_Config.m_PulsarRingVelocity * 2.0f);
 }

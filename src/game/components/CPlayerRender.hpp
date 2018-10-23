@@ -18,6 +18,7 @@ public:
 private:
 	void renderLine(sf::RenderTarget& target, sf::RenderStates states, CPlayer *pPlayer) const noexcept;
 	void renderSpectrum(sf::RenderTarget& target, sf::RenderStates states, CPlayer *pPlayer) const noexcept;
+	void renderControls(sf::RenderTarget& target, sf::RenderStates states) const noexcept;
 };
 
 #endif

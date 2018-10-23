@@ -50,7 +50,6 @@ void CMenus::draw(sf::RenderTarget& target, sf::RenderStates states) const noexc
 		inMenu = true;
 	}
 
-
 	if (m_ActiveMenu == MAIN)
 		renderMenuMain(target, states);
 	else if (m_ActiveMenu == CONTROLS)
@@ -60,6 +59,8 @@ void CMenus::draw(sf::RenderTarget& target, sf::RenderStates states) const noexc
 		renderModalKeyBind(target, states);
 	else if (m_ActiveModal == MODAL_GAMEOVER)
 		renderModalGameOver(target, states);
+	else if (m_ActiveModal == MODAL_END_SONG)
+		renderModalEndSong(target, states);
 }
 
 void CMenus::renderModalKeyBind(sf::RenderTarget& target, sf::RenderStates states) const noexcept
@@ -86,6 +87,20 @@ void CMenus::renderModalGameOver(sf::RenderTarget& target, sf::RenderStates stat
 	bounds.left -= 2.0f;
 	bounds.top -= 2.0f;
 	Client()->UI().doLabel(target, states, _("GAME OVER"), bounds, sf::Color::White, 82, CUI::ALIGN_CENTER);
+}
+
+void CMenus::renderModalEndSong(sf::RenderTarget& target, sf::RenderStates states) const noexcept
+{
+	sf::FloatRect rectArea;
+	Client()->getViewportGlobalBounds(&rectArea, target.getView());
+
+	const sf::Vector2f offset = sf::Vector2f(cosf(Client()->getElapsedTime()*1.85f)*64.0f, 0.0f);
+
+	sf::FloatRect bounds(offset.x, offset.y, g_Config.m_ScreenWidth, g_Config.m_ScreenHeight);
+	Client()->UI().doLabel(target, states, _("YOU WIN!"), bounds, sf::Color(upm::randInt(128, 255), upm::randInt(128, 255), upm::randInt(128, 255)), 116, CUI::ALIGN_CENTER);
+	bounds.left -= 2.0f;
+	bounds.top -= 2.0f;
+	Client()->UI().doLabel(target, states, _("YOU WIN!"), bounds, sf::Color(upm::randInt(0, 128), upm::randInt(0, 128), upm::randInt(0, 128)), 116, CUI::ALIGN_CENTER);
 }
 
 void CMenus::renderMenuControls(sf::RenderTarget& target, sf::RenderStates states) const noexcept

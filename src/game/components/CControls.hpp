@@ -31,6 +31,8 @@ public:
 	void setKeyBind(const char *pCmd, int key, bool isMouseButton=false) noexcept;
 	void listenKeyBind(const char *pCmd) noexcept;
 
+	const char* getCommandKeyName(const char *pCmd);
+
 	// FIXME: When SFML use the same enum for keyboard and mouse buttons delete this!!
 	static int getRealKey(int key) { return key<0?key * -1 - 2:key; }
 	static const char* getKeyName(int key);

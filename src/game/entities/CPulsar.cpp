@@ -23,34 +23,23 @@ CPulsar::~CPulsar() noexcept
 
 void CPulsar::tick() noexcept
 {
+	static sf::Color colors[3] = {
+		sf::Color::Red,
+		sf::Color::Green,
+		sf::Color::Blue
+	};
 	CGame *pGame = CGame::getInstance();
 	CSystemFMod *pSystemFMod = pGame->Client()->getSystem<CSystemFMod>();
-	float energyKick, energySnare;
-	pSystemFMod->getEnergy(&energyKick, &energySnare);
+	float energyKick;
+	pSystemFMod->getEnergy(CSystemFMod::CHANNEL_GROUP_BACKGROUND, &energyKick, 0x0);
 	energyKick *= 10.0f;
-	energySnare *= 10.0f;
-
-	if (energyKick > 1.0f || energySnare > 0.6f)
+	if (energyKick > g_Config.m_MinKickEnergy)
 	{
 		if (!m_KickUsed)
-			m_AddRing = true;
+			m_vRings.push_back(CPulsarRing(m_Pos, colors[upm::randInt(0, 2)], 0.0f, 1.0f+energyKick*2.5f, pGame->Client()->m_TestVar));
 		m_KickUsed = true;
 	} else
-	{
 		m_KickUsed = false;
-	}
-
-	if (m_AddRing)
-	{
-		static sf::Color colors[3] = {
-			sf::Color::Red,
-			sf::Color::Green,
-			sf::Color::Blue
-		};
-		m_vRings.push_back(CPulsarRing(m_Pos, colors[upm::randInt(0, 2)], 0.0f, (energyKick+energySnare)*4.0f, pGame->Client()->m_TestVar));
-		m_AddRing = false;
-	}
-
 
 	std::vector<CPulsarRing>::iterator it = m_vRings.begin();
 	while (it != m_vRings.end())
