@@ -296,7 +296,7 @@ bool CGameClient::init() noexcept
 		ups::msgDebug("CGame", "Can't found selected language! using english...");
 
 	char title[128];
-	snprintf(title, sizeof(title), "MVJam IV v" GAME_RELEASE_VERSION);
+	snprintf(title, sizeof(title), "MusiCrap v%s - MVJam IV", GAME_RELEASE_VERSION);
 	setTitle(title);
 
 	/** LOADING ASSETS **/

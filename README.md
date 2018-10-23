@@ -91,7 +91,7 @@ set ZLIB_ROOT=C:\Program Files\zlib
 set ZPG_ROOT=C:\Program Files\libZpg
 set SFML_ROOT=c:\projects\SFML-2.5.1_win64
 cmake -Werror=dev -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Release -DZLIB_ROOT="%ZLIB_ROOT%" -DZPG_PACKER_BIN="%ZPG_ROOT%\bin\zpg_packer.exe" ..
-cmake --build build --config Release --target MVJam
+cmake --build build --config Release --target MusiCrap
 ```
 -  ### Create ZPG Assets Package
   ```
