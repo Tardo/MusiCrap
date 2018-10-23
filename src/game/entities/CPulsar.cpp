@@ -36,7 +36,7 @@ void CPulsar::tick() noexcept
 	if (energyKick > g_Config.m_MinKickEnergy)
 	{
 		if (!m_KickUsed)
-			m_vRings.push_back(CPulsarRing(m_Pos, colors[upm::randInt(0, 2)], 0.0f, 1.0f+energyKick*2.5f, pGame->Client()->m_TestVar));
+			m_vRings.push_back(CPulsarRing(m_Pos, colors[upm::randInt(0, 2)], 0.0f, 1.0f+energyKick*1.5f, pGame->Client()->m_TestVar));
 		m_KickUsed = true;
 	} else
 		m_KickUsed = false;

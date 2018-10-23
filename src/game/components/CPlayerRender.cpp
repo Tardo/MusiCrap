@@ -27,9 +27,6 @@ void CPlayerRender::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 	{
 		renderLine(target, states, Client()->Controller()->Context()->getPlayer());
 		renderSpectrum(target, states, Client()->Controller()->Context()->getPlayer());
-	}
-	else if (Client()->getRenderMode() == RENDER_MODE_NORMAL)
-	{
 		renderControls(target, states);
 	}
 }

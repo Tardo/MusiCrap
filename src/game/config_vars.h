@@ -13,12 +13,12 @@ MACRO_CONFIG_BOOL(FullScreen, fullscreen, false, CConfig::SAVE)
 MACRO_CONFIG_BOOL(UseShaders, use_shaders, true, CConfig::SAVE)
 MACRO_CONFIG_INT(ScreenWidth, screen_width, 1024, 1, 1920, CConfig::SAVE)
 MACRO_CONFIG_INT(ScreenHeight, screen_height, 768, 1, 1080, CConfig::SAVE)
-MACRO_CONFIG_BOOL(CursorGrab, cursor_grab, true, CConfig::SAVE)
+MACRO_CONFIG_BOOL(CursorGrab, cursor_grab, false, CConfig::SAVE)
 MACRO_CONFIG_BOOL(CursorShow, cursor_show, false, CConfig::SAVE)
 
 MACRO_CONFIG_FLOAT(PulsarRingVelocity, pulsar_ring_velocity, 350.0f, 0.1f, 9999.0f, CConfig::SAVE)
 
-MACRO_CONFIG_FLOAT(MinKickEnergy, min_kick_energy, 4.0f, 0.1f, 9999.0f, CConfig::SAVE)
+MACRO_CONFIG_FLOAT(MinKickEnergy, min_kick_energy, 7.5f, 0.1f, 9999.0f, CConfig::SAVE)
 
 MACRO_CONFIG_STR(SongFilename, song_filename, 512, "music.ogg", CConfig::SAVE)
 MACRO_CONFIG_INT(MinComboCount, min_combo_count, 3, 1, 9999, CConfig::SAVE)

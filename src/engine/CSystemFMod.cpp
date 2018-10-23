@@ -215,7 +215,7 @@ void CSystemFMod::getEnergy(int channelGroup, float *pEnergyKick, float *pEnergy
 	// Detectar golpe de bombo
 	if (pEnergyKick)
 	{
-		for (unsigned int i=5; i<30; i++)
+		for (unsigned int i=5; i<40; i++)
 		{
 			LeftSum += m_vLeftSpec[channelGroup][i];
 			RightSum += m_vRightSpec[channelGroup][i];
@@ -227,7 +227,7 @@ void CSystemFMod::getEnergy(int channelGroup, float *pEnergyKick, float *pEnergy
 	if (pEnergySnare)
 	{
 		LeftSum = RightSum = 0;
-		for (unsigned int i=30; i<40; i++)
+		for (unsigned int i=80; i<120; i++)
 		{
 			LeftSum += m_vLeftSpec[channelGroup][i];
 			RightSum += m_vRightSpec[channelGroup][i];
